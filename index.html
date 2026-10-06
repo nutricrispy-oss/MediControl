@@ -124,7 +124,7 @@ function askN(){try{Notification.requestPermission().then(p=>toast(p==='granted'
 
 async function sha(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(S.set.salt+p));return[...new Uint8Array(b)].map(x=>pad(x.toString(16))).join('')}
 function pinSet(){sheet('<h2>Crear PIN</h2><label>4 a 6 dígitos</label><input id="np" type="password" inputmode="numeric" maxlength="6"><button class="btn p" style="width:100%;margin-top:12px" onclick="pinSave()">Guardar PIN</button>')}
-async function pinSave(){const v=$('#np'].value;if(!/^\d{4,6}$/.test(v)){toast('Usa 4 a 6 dígitos');return}
+async function pinSave(){const v=$('#np').value;if(!/^\d{4,6}$/.test(v)){toast('Usa 4 a 6 dígitos');return}
 S.set.salt=Math.random().toString(36).slice(2)+Date.now();S.set.pin=await sha(v);save();closeS();render();toast('PIN guardado')}
 function pinOff(){S.set.pin='';save();render()}
 async function unlock(){if(await sha($('#pi').value)===S.set.pin){$('#lk').classList.remove('on');$('#pi').value='';$('#pe').textContent=''}else $('#pe').textContent='PIN incorrecto'}
@@ -146,7 +146,7 @@ function form(){const td=ds(new Date());sheet(`<h2>Agregar producto</h2>
 <button class="btn p" style="width:100%;margin-top:16px" onclick="saveP()">Guardar</button>`);md='i';ph=''}
 function tg(){$('#gi').style.display=md==='i'?'':'none';$('#gm').style.display=md==='m'?'':'none'}
 function saveP(){const f=i=>$('#'+i).value.trim(),name=f('fn');if(!name){toast('Escribe un nombre');return}
-const times=md==='i'?gen(f('f1'),+f('fh')):f('ft'].split(/[\s,;]+/).filter(t=>/^\d{1,2}:\d{2}$/.test(t)).map(t=>pad(t.split(':')[0])+':'+t.split(':')[1]).sort();
+const times=md==='i'?gen(f('f1'),+f('fh')):f('ft').split(/[\s,;]+/).filter(t=>/^\d{1,2}:\d{2}$/.test(t)).map(t=>pad(t.split(':')[0])+':'+t.split(':')[1]).sort();
 if(!times.length){toast('Agrega al menos un horario');return}
 const days=[...document.querySelectorAll('.wd:checked')].map(e=>+e.value),dur=+f('fd'),start=f('fs')||ds(new Date());let end=null;
 if(dur>0){const e=new Date(start+'T00:00');e.setDate(e.getDate()+dur-1);end=ds(e)}
@@ -184,7 +184,7 @@ const WZ=['Organiza tus medicamentos y suplementos.','Recibe recordatorios cuand
 function wiz(i){sheet(`<div style="text-align:center;padding:12px 0"><div style="font-size:56px">${WI[i]}</div><h2>${WZ[i]}</h2><p class="mut">${i+1} de 4</p></div><button class="btn p" style="width:100%" onclick="${i<3?'wiz('+(i+1)+')':'S.set.wiz=1;save();closeS()'}">${i<3?'Siguiente':'COMENZAR'}</button>${i<3?'<button class="btn" style="width:100%;margin-top:8px" onclick="S.set.wiz=1;save();closeS()">Omitir</button>':''}`)}
 function badge(){try{const d=ds(new Date()),n=dosesFor(d).filter(x=>st(x)==='p'&&new Date(d+'T'+x.t)<=new Date()).length;if(navigator.setAppBadge)(n?navigator.setAppBadge(n):navigator.clearAppBadge()).catch(()=>{})}catch(e){}}
 function pdf(){const R=LR,t=R.filter(l=>l.s==='t').length,by={},fm=d=>d.split('-').reverse().join('/');R.forEach(l=>{const b=by[l.n]=by[l.n]||{p:0,t:0,o:0};b.p++;l.s==='t'?b.t++:b.o++});
-$('#rp').innerHTML=`<h1>Informe de tratamiento</h1><p>Periodo: ${fm(LP[0])} - ${fm(LP[1])}<br>Registradas: ${R.length} · Tomadas: ${t} · Omitidas: ${R.length-t}</p><h2>Por producto</h2><table><tr><th>Producto</th><th>Registradas</th><th>Tomadas</th><th>Omitidas</th></tr>${Object.entries(by).map(e=>`<tr><td>${esc(e[0])}</td><td>${e[1].p}</td><td>${e[1].t}</td><td>${e[1].o}</td></tr>`).join('')}</table><h2>Detalle</h2><table><tr><th>Fecha</th><th>Producto</th><th>Hora</th><th>Estado</th></tr>${R.map(l=>`<tr><td>${fm(l.d)}</td><td>${esc(l.n)}${esc(l.z)}</td><td>${l.t}</td><td>${l.s==='t'?'Tomado':'Omitido'}</td></tr>`).join('')}</table><p style="font-size:12px">Registro personal generado por MediControl. No reemplaza indicaciones médicas.</p>`;window.print()}
+$('#rp').innerHTML=`<h1>Informe de tratamiento</h1><p>Periodo: ${fm(LP[0])} - ${fm(LP[1])}<br>Registradas: ${R.length} · Tomadas: ${t} · Omitidas: ${R.length-t}</p><h2>Por producto</h2><table><tr><th>Producto</th><th>Registradas</th><th>Tomadas</th><th>Omitidas</th></tr>${Object.entries(by).map(e=>`<tr><td>${esc(e[0])}</td><td>${e[1].p}</td><td>${e[1].t}</td><td>${e[1].o}</td></tr>`).join('')}</table><h2>Detalle</h2><table><tr><th>Fecha</th><th>Producto</th><th>Hora</th><th>Estado</th></tr>${R.map(l=>`<tr><td>${fm(l.d)}</td><td>${esc(l.n)} ${esc(l.z)}</td><td>${l.t}</td><td>${l.s==='t'?'Tomado':'Omitido'}</td></tr>`).join('')}</table><p style="font-size:12px">Registro personal generado por MediControl. No reemplaza indicaciones médicas.</p>`;window.print()}
 const b64=u=>{let s='';u=new Uint8Array(u);u.forEach(c=>s+=String.fromCharCode(c));return btoa(s)},ub=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 async function key(pw,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
 async function pack(pw){const j=JSON.stringify({prods:S.prods,logs:S.logs});if(!pw)return j;const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),c=await crypto.subtle.encrypt({name:'AES-GCM',iv},await key(pw,salt),new TextEncoder().encode(j));return JSON.stringify({enc:1,s:b64(salt),i:b64(iv),d:b64(c)})}
