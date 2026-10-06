@@ -46,7 +46,7 @@ input,select,textarea{width:100%;font:inherit;padding:12px;border-radius:12px;bo
 </style></head>
 <body>
 <main id="m"></main>
-<button class="fab" id="fab" onclick="form()">+ AGREGAR</button>
+<button class="fab" id="fab" onclick="addForm()">+ AGREGAR</button>
 <nav id="nv"></nav>
 <div id="sh" onclick="if(event.target===this)closeS()"><div class="sheet" id="shc"></div></div>
 <div id="lk"><div class="lk"><h1>🔒 MediControl</h1><p class="mut">Ingresa tu PIN</p><input id="pi" type="password" inputmode="numeric" maxlength="6" autocomplete="off"><button class="btn p" style="width:100%;margin-top:12px" onclick="unlock()">Entrar</button><p id="pe" class="mut"></p></div></div>
@@ -82,7 +82,7 @@ function skp(k){sheet('<h2>Omitir toma</h2>'+['Omitida','No disponible','Olvidé
 function hoy(){const now=new Date(),d=ds(now),L=dosesFor(d),nm=now.getHours()*60+now.getMinutes();
 const t=L.filter(x=>st(x)==='t').length,o=L.filter(x=>st(x)==='o').length,pen=L.length-t-o,nx=L.find(x=>st(x)==='p'),pc=L.length?Math.round(t/L.length*100):0;
 let h=`<p class="mut" style="margin:0">HOY</p><h1>${DN[now.getDay()]} ${now.getDate()} de ${MN[now.getMonth()]}</h1>`;
-if(!S.prods.length)return h+'<div class="card"><h2 style="margin-top:0">Organiza tus tomas</h2><p class="mut">Agrega tu primer medicamento o suplemento, define los horarios y recibe el recordatorio a tu hora.</p><button class="btn p" style="width:100%" onclick="form()">Agregar el primero</button></div>'+disc();
+if(!S.prods.length)return h+'<div class="card"><h2 style="margin-top:0">Organiza tus tomas</h2><p class="mut">Agrega tu primer medicamento o suplemento, define los horarios y recibe el recordatorio a tu hora.</p><button class="btn p" style="width:100%" onclick="addForm()">Agregar el primero</button></div>'+disc();
 h+=alerts();if(!L.length)h+='<div class="card">No tienes tomas programadas hoy.</div>';
 else if(nx){const due=sn[nx.k]||new Date(d+'T'+nx.t).getTime(),df=Math.round((due-Date.now())/60000);
 h+=`<div class="card next"><span class="mut">Próxima toma</span><div class="big">${ICO[nx.p.cat]||'💊'} ${esc(nx.p.name)}</div><div>${esc(nx.p.dose)}</div><div style="margin-top:6px"><b>🕐 ${sn[nx.k]?new Date(due).toTimeString().slice(0,5):nx.t}</b> · ${df>0?'En '+ago(df):'¡Es hora! (hace '+ago(df)+')'}</div>
@@ -130,7 +130,7 @@ function pinOff(){S.set.pin='';save();render()}
 async function unlock(){if(await sha($('#pi').value)===S.set.pin){$('#lk').classList.remove('on');$('#pi').value='';$('#pe').textContent=''}else $('#pe').textContent='PIN incorrecto'}
 
 let md='i';
-function form(){const td=ds(new Date());sheet(`<h2>Agregar producto</h2>
+function addForm(){const td=ds(new Date());sheet(`<h2>Agregar producto</h2>
 <label>Nombre</label><input id="fn" placeholder="Magnesio">
 <label>Categoría</label><select id="fc">${CATS.map(c=>`<option>${c}</option>`).join('')}</select>
 <label>Dosis (libre)</label><input id="fo" placeholder="200 mg, 1 comprimido, 10 ml">
@@ -200,5 +200,5 @@ function alarm(x,r){try{navigator.vibrate&&navigator.vibrate([300,150,300])}catc
 function tick(){const d=ds(new Date());dosesFor(d).forEach(x=>{if(S.logs[x.k])return;const due=sn[x.k]||new Date(d+'T'+x.t).getTime(),id=x.k+due;
 if(Date.now()>=due&&!nt[id]&&Date.now()-due<6*36e5){nt[id]=1;alarm(x)}if(S.set.rep!==false)[1,2].forEach(n=>{const t=due+n*9e5,i2=id+'r'+n;if(Date.now()>=t&&!nt[i2]&&Date.now()-t<36e5){nt[i2]=1;alarm(x,1)}})});badge();if(tab==='hoy'&&!$('#sh.on'))render()}
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
-theme();render();if(S.set.pin)$('#lk').classList.add('on');setInterval(tick,20000);tick();if(!S.set.wiz&&!S.prods.length&&!S.set.pin)wiz(0);else if(/a=add/.test(location.search))form();
+theme();render();if(S.set.pin)$('#lk').classList.add('on');setInterval(tick,20000);tick();if(!S.set.wiz&&!S.prods.length&&!S.set.pin)wiz(0);else if(/a=add/.test(location.search))addForm();
 </script></body></html>
