@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>MediControl</title>
+<style>
+:root{--bg:#f1f6f4;--card:#fff;--ink:#14262b;--mut:#5b7076;--pri:#0f766e;--onp:#fff;--ok:#16a34a;--warn:#d97706;--bad:#dc2626;--line:#d9e5e1;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a1d;--card:#16272b;--ink:#e7f1ef;--mut:#93aaa8;--pri:#2dd4bf;--onp:#06201c;--line:#26393d}}
+:root[data-theme="dark"]{--bg:#0e1a1d;--card:#16272b;--ink:#e7f1ef;--mut:#93aaa8;--pri:#2dd4bf;--onp:#06201c;--line:#26393d}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column}
+main{flex:1;overflow-y:auto;padding:16px 16px 96px;max-width:560px;width:100%;margin:0 auto}
+h1{font-size:26px;margin:4px 0 2px;letter-spacing:-.02em}h2{font-size:18px;margin:20px 0 8px}
+.mut{color:var(--mut);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:10px 0}
+.next{border-radius:26px;border:2px solid var(--warn);padding:20px}
+.next .big{font-size:30px;font-weight:800;margin:6px 0 0}
+.btn{border:0;border-radius:14px;padding:14px 16px;font:inherit;font-weight:700;background:var(--line);color:var(--ink);cursor:pointer;min-height:48px}
+.btn.p{background:var(--pri);color:var(--onp)}.btn.ok{background:var(--ok);color:#fff;width:100%;font-size:18px;min-height:58px;margin-top:12px}
+.btn.d{background:transparent;color:var(--bad);border:1px solid var(--bad)}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.tl{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.tl:last-child{border:0}.tl b{font-variant-numeric:tabular-nums}.tl .n{flex:1}.tl.t{opacity:.6}
+.bar{height:10px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:var(--ok)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}.stats b{display:block;font-size:24px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;color:var(--mut);font:inherit;font-size:12px;padding:10px 0;min-height:56px;cursor:pointer}
+nav button.on{color:var(--pri);font-weight:800}nav span{display:block;font-size:22px}
+.fab{position:fixed;right:18px;bottom:calc(76px + env(safe-area-inset-bottom,0px));background:var(--pri);color:var(--onp);border:0;border-radius:30px;padding:0 22px;height:56px;font:inherit;font-weight:800;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer}
+#sh,#lk{position:fixed;inset:0;display:none;background:rgba(0,0,0,.5);z-index:9}
+#sh.on{display:flex;align-items:flex-end}#lk.on{display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.sheet{background:var(--card);width:100%;max-width:560px;margin:0 auto;border-radius:24px 24px 0 0;padding:20px;max-height:90%;overflow-y:auto}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 4px}
+input,select,textarea{width:100%;font:inherit;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.wds{display:flex;gap:6px;flex-wrap:wrap}.wds label{display:flex;align-items:center;gap:4px;margin:0;font-weight:500;width:auto}.wds input{width:auto}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--line)}
+.lk{text-align:center;padding:24px;max-width:320px}.lk input{text-align:center;font-size:28px;letter-spacing:.4em}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:150px;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:20px;display:none;z-index:10}
+.cols{display:grid;grid-template-columns:auto 1fr auto;gap:8px 12px;align-items:center}
+.th{width:44px;height:44px;border-radius:12px;object-fit:cover}.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}.cal b{font-size:12px;color:var(--mut)}.dy{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;aspect-ratio:1;cursor:pointer;padding:0}.dy.g{background:var(--ok);color:#fff;border-color:var(--ok)}.dy.y{background:var(--warn);color:#fff;border-color:var(--warn)}.dy.r{background:var(--bad);color:#fff;border-color:var(--bad)}.dy.td{outline:2px solid var(--pri)}
+#rp{display:none}
+@media print{body{background:#fff!important;display:block!important}body>*:not(#rp){display:none!important}#rp{display:block!important;color:#000;padding:16px}#rp table{width:100%;border-collapse:collapse;margin-bottom:12px}#rp td,#rp th{border:1px solid #999;padding:4px 6px;text-align:left;font-size:12px}}
+</style></head>
+<body>
+<main id="m"></main>
+<button class="fab" id="fab" onclick="form()">+ AGREGAR</button>
+<nav id="nv"></nav>
+<div id="sh" onclick="if(event.target===this)closeS()"><div class="sheet" id="shc"></div></div>
+<div id="lk"><div class="lk"><h1>🔒 MediControl</h1><p class="mut">Ingresa tu PIN</p><input id="pi" type="password" inputmode="numeric" maxlength="6" autocomplete="off"><button class="btn p" style="width:100%;margin-top:12px" onclick="unlock()">Entrar</button><p id="pe" class="mut"></p></div></div>
+<div id="toast"></div><div id="rp"></div>
+<script>
+const K='medicontrol:v1',$=s=>document.querySelector(s);
+let S={prods:[],logs:{},set:{theme:'auto',pin:'',salt:''}},tab='hoy',sn={},nt={},fl='hoy';
+try{const r=localStorage.getItem(K);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const pad=n=>String(n).padStart(2,'0'),ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mins=t=>{const a=t.split(':');return +a[0]*60+ +a[1]};
+const DN=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],MN=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const CATS=['Medicamento','Multivitamínico','Vitamina','Mineral','Suplemento','Complejo B','Calcio','Magnesio','Hierro','Creatina','Proteína','Otro'];
+const ICO={Medicamento:'💊',Multivitamínico:'🧴',Creatina:'⚡',Proteína:'⚡'};
+const toast=t=>{const e=$('#toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2200)};
+function theme(){const r=document.documentElement;S.set.theme==='auto'?r.removeAttribute('data-theme'):r.setAttribute('data-theme',S.set.theme)}
+
+function dosesFor(d){const wd=new Date(d+'T00:00').getDay(),o=[];
+S.prods.forEach(p=>{if(p.status!=='activo'||d<p.start||(p.end&&d>p.end))return;if(p.days.length&&!p.days.includes(wd))return;
+p.times.forEach(t=>o.push({p,t,k:p.id+'|'+d+'|'+t,d}))});return o.sort((a,b)=>a.t.localeCompare(b.t))}
+function gen(first,h){const n=Math.max(1,Math.floor(24/h)),s=mins(first||'08:00'),r=[];
+for(let i=0;i<n;i++){const m=(s+i*h*60)%1440;r.push(pad(Math.floor(m/60))+':'+pad(m%60))}return r.sort()}
+const st=x=>S.logs[x.k]?S.logs[x.k].s:'p';
+const ago=m=>{m=Math.abs(m);return m>=60?Math.floor(m/60)+' h '+(m%60?m%60+' min':''):m+' min'};
+
+function mk(k,s,r){const a=k.split('|'),p=S.prods.find(x=>x.id===a[0]);
+S.logs[k]={s,at:Date.now(),r:r||'',n:p?p.name:'?',z:p?p.dose:'',d:a[1],t:a[2]};if(s==='t'&&p&&p.stock!=null)p.stock=Math.max(0,+(p.stock-(p.per||1)).toFixed(2));delete sn[k];save();closeS();render();toast(s==='t'?'✓ Tomado':'Omitido registrado')}
+function snooze(k,m){m=+m;if(!m||m<1)return;sn[k]=Date.now()+m*60000;closeS();render();toast('Te aviso en '+m+' min')}
+function snz(k){sheet('<h2>Posponer</h2><div class="row" style="flex-wrap:wrap">'+[5,10,15,30,60].map(m=>`<button class="btn" onclick="snooze('${k}',${m})">${m==60?'1 hora':m+' min'}</button>`).join('')+'</div><label>Personalizado (minutos)</label><div class="row"><input id="cs" type="number" min="1" inputmode="numeric"><button class="btn p" onclick="snooze(\''+k+'\',$(\'#cs\').value)">Posponer</button></div>')}
+function skp(k){sheet('<h2>Omitir toma</h2>'+['Omitida','No disponible','Olvidé tomarla','Otra razón'].map(r=>`<button class="btn" style="width:100%;margin:5px 0" onclick="mk('${k}','o','${r}')">${r}</button>`).join(''))}
+
+function hoy(){const now=new Date(),d=ds(now),L=dosesFor(d),nm=now.getHours()*60+now.getMinutes();
+const t=L.filter(x=>st(x)==='t').length,o=L.filter(x=>st(x)==='o').length,pen=L.length-t-o,nx=L.find(x=>st(x)==='p'),pc=L.length?Math.round(t/L.length*100):0;
+let h=`<p class="mut" style="margin:0">HOY</p><h1>${DN[now.getDay()]} ${now.getDate()} de ${MN[now.getMonth()]}</h1>`;
+if(!S.prods.length)return h+'<div class="card"><h2 style="margin-top:0">Organiza tus tomas</h2><p class="mut">Agrega tu primer medicamento o suplemento, define los horarios y recibe el recordatorio a tu hora.</p><button class="btn p" style="width:100%" onclick="form()">Agregar el primero</button></div>'+disc();
+h+=alerts();if(!L.length)h+='<div class="card">No tienes tomas programadas hoy.</div>';
+else if(nx){const due=sn[nx.k]||new Date(d+'T'+nx.t).getTime(),df=Math.round((due-Date.now())/60000);
+h+=`<div class="card next"><span class="mut">Próxima toma</span><div class="big">${ICO[nx.p.cat]||'💊'} ${esc(nx.p.name)}</div><div>${esc(nx.p.dose)}</div><div style="margin-top:6px"><b>🕐 ${sn[nx.k]?new Date(due).toTimeString().slice(0,5):nx.t}</b> · ${df>0?'En '+ago(df):'¡Es hora! (hace '+ago(df)+')'}</div>
+<button class="btn ok" onclick="mk('${nx.k}','t')">✓ MARCAR COMO TOMADO</button><div class="row" style="margin-top:8px"><button class="btn" onclick="snz('${nx.k}')">⏰ Posponer</button><button class="btn" onclick="skp('${nx.k}')">✕ Omitir</button></div></div>`}
+else h+='<div class="card" style="border-color:var(--ok)"><b>🎉 Todo listo por hoy.</b><div class="mut">Ya resolviste todas las tomas.</div></div>';
+if(L.length){h+=`<div class="card"><div class="stats"><div><b>${L.length}</b><span class="mut">Programadas</span></div><div><b style="color:var(--ok)">${t}</b><span class="mut">Tomadas</span></div><div><b>${pen}</b><span class="mut">Pendientes</span></div><div><b style="color:var(--bad)">${o}</b><span class="mut">Omitidas</span></div></div><div class="bar"><i style="width:${pc}%"></i></div></div><h2>Línea de tiempo</h2><div class="card" style="padding:4px 16px">`;
+L.forEach(x=>{const s=st(x),ic=s==='t'?'🟢':s==='o'?'🔴':(nx&&nx.k===x.k)?'🟡':'⚪';
+h+=`<div class="tl ${s==='t'?'t':''}"><span>${ic}</span><b>${x.t}</b><span class="n">${esc(x.p.name)} <span class="mut">${esc(x.p.dose)}</span></span>${s==='p'?`<button class="btn" style="min-height:40px;padding:6px 12px" onclick="mk('${x.k}','t')">✓</button>`:''}</div>`});h+='</div>'}
+return h+disc()}
+const disc=()=>'<p class="mut" style="text-align:center;margin-top:24px">MediControl solo organiza y recuerda. No reemplaza las indicaciones de tu profesional de salud.</p>';
+
+function prods(){let h='<h1>Mis productos</h1>';if(!S.prods.length)h+='<div class="card mut">Todavía no agregaste nada.</div>';
+const td=ds(new Date());
+S.prods.forEach(p=>{let es=p.status==='activo'&&p.end&&p.end<td?'vencido':p.status;const col={activo:'var(--ok)',pausado:'var(--warn)',finalizado:'#2563eb',vencido:'var(--bad)'}[es];
+let prog='';if(p.end){const tot=Math.round((new Date(p.end)-new Date(p.start))/864e5)+1,dn=Math.min(tot,Math.max(0,Math.round((new Date(td)-new Date(p.start))/864e5)+1));prog=`<div class="mut">Día ${dn} de ${tot}</div><div class="bar"><i style="width:${dn/tot*100}%"></i></div>`}
+h+=`<div class="card"><div class="cols">${p.img?`<img class="th" src="${p.img}">`:`<span style="font-size:28px">${ICO[p.cat]||'💊'}</span>`}<div><b>${esc(p.name)}</b><div class="mut">${esc(p.cat)} · ${esc(p.dose)}</div></div><span class="tag" style="color:${col}">${es}</span></div><div class="mut" style="margin:8px 0">🕐 ${p.times.join(' · ')}${p.days.length?' · '+p.days.map(i=>DN[i].slice(0,3)).join(' '):''}</div>${prog}
+${inv(p)}<div class="row" style="margin-top:10px"><button class="btn" onclick="setS('${p.id}','${p.status==='pausado'?'activo':'pausado'}')">${p.status==='pausado'?'▶ Reanudar':'⏸ Pausar'}</button><button class="btn" onclick="setS('${p.id}','finalizado')">Finalizar</button><button class="btn d" onclick="del('${p.id}')">Eliminar</button></div></div>`});return h}
+function setS(id,s){const p=S.prods.find(x=>x.id===id);p.status=s;save();render()}
+function del(id){sheet('<h2>¿Eliminar este producto?</h2><p class="mut">No se eliminará el historial anterior. Solo dejará de programarse.</p><div class="row"><button class="btn" onclick="closeS()">Cancelar</button><button class="btn d" onclick="S.prods=S.prods.filter(x=>x.id!==\''+id+'\');save();closeS();render()">Eliminar</button></div>')}
+
+function hist(){const now=new Date();let f=new Date(now);f.setHours(0,0,0,0);let to=ds(now);
+if(fl==='ayer'){f.setDate(f.getDate()-1);to=ds(f)}else if(fl==='sem')f.setDate(f.getDate()-6);else if(fl==='mes')f.setDate(f.getDate()-29);
+const fs=(LP=[ds(f),to])[0],R=LR=Object.values(S.logs).filter(l=>l.d>=fs&&l.d<=to).sort((a,b)=>(b.d+b.t).localeCompare(a.d+a.t));
+const t=R.filter(l=>l.s==='t').length,pc=R.length?Math.round(t/R.length*100):0;
+let h='<h1>Historial</h1><select onchange="fl=this.value;render()">'+[['hoy','Hoy'],['ayer','Ayer'],['sem','Esta semana'],['mes','Este mes']].map(a=>`<option value="${a[0]}"${fl===a[0]?' selected':''}>${a[1]}</option>`).join('')+'</select><button class="btn" style="margin-top:8px;width:100%" onclick="csv()">📄 Exportar CSV</button><button class="btn" style="margin-top:8px;width:100%" onclick="pdf()">📑 Informe PDF</button>';
+h+=`<div class="card"><b>Cumplimiento: ${pc}%</b><div class="mut">${t} tomadas · ${R.length-t} omitidas</div><div class="bar"><i style="width:${pc}%"></i></div></div>`;
+if(!R.length)h+='<div class="card mut">Sin registros en este período.</div>';
+R.forEach(l=>{const a=l.d.split('-'),at=l.s==='t'?' · tomado '+new Date(l.at).toTimeString().slice(0,5):l.r?' · '+esc(l.r):'';
+h+=`<div class="card" style="padding:12px 16px"><div class="cols"><b>${a[2]}/${a[1]}</b><div>${esc(l.n)} <span class="mut">${esc(l.z)}</span><div class="mut">Programada ${l.t}${at}</div></div><span>${l.s==='t'?'✓ Tomado':'✕ Omitido'}</span></div></div>`});return h}
+
+function ajustes(){const s=S.set;return `<h1>Ajustes</h1>
+<div class="card"><label style="margin-top:0">Tema</label><select onchange="S.set.theme=this.value;save();theme()">${[['auto','⚙️ Automático'],['light','☀️ Claro'],['dark','🌙 Oscuro']].map(a=>`<option value="${a[0]}"${s.theme===a[0]?' selected':''}>${a[1]}</option>`).join('')}</select></div>
+<div class="card"><b>🔒 PIN</b><p class="mut">${s.pin?'PIN activo. Se pide al abrir la app.':'Protege tus datos con un PIN de 4 a 6 dígitos.'}</p><div class="row"><button class="btn p" onclick="pinSet()">${s.pin?'Cambiar PIN':'Crear PIN'}</button>${s.pin?'<button class="btn d" onclick="pinOff()">Quitar</button>':''}</div></div>
+<div class="card"><b>🔔 Recordatorios</b><p class="mut">Para recibir avisos mantén la app abierta o en segundo plano. Con el teléfono bloqueado Android puede no entregarlos; para eso conviene sumar una alarma del reloj.</p><button class="btn p" onclick="askN()">Permitir notificaciones</button></div>
+<div class="card"><b>🔁 Alarma repetitiva</b><label style="display:flex;gap:10px;align-items:center;font-weight:500"><input type="checkbox" style="width:auto" ${S.set.rep!==false?'checked':''} onchange="S.set.rep=this.checked;save()"> Repetir el aviso a los 15 y 30 min si no registro la toma</label></div>
+<div class="card"><b>📤 Copia de seguridad</b><p class="mut">Descarga o comparte (Drive, WhatsApp, correo) un archivo con todos tus datos. Puedes protegerlo con contraseña; sin ella no se podrá restaurar.</p><input id="bp" type="password" placeholder="Contraseña (opcional)" autocomplete="new-password"><div class="row" style="margin-top:8px"><button class="btn" onclick="bkDl()">Descargar</button><button class="btn" onclick="bkSh()">☁️ Compartir</button></div><label>Restaurar desde archivo</label><input type="file" accept=".json,.txt,application/json,text/plain" onchange="rf(this)"></div>
+<div class="card"><b>📲 Instalar app</b><p class="mut">Si Chrome no te mostró el aviso al abrir, instálala desde aquí.</p><button class="btn p" style="width:100%" onclick="inst()">Instalar MediControl</button></div>`+disc()}
+function askN(){try{Notification.requestPermission().then(p=>toast(p==='granted'?'Notificaciones activas':'Permiso no concedido'))}catch(e){toast('Este navegador no las admite')}}
+
+async function sha(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(S.set.salt+p));return[...new Uint8Array(b)].map(x=>pad(x.toString(16))).join('')}
+function pinSet(){sheet('<h2>Crear PIN</h2><label>4 a 6 dígitos</label><input id="np" type="password" inputmode="numeric" maxlength="6"><button class="btn p" style="width:100%;margin-top:12px" onclick="pinSave()">Guardar PIN</button>')}
+async function pinSave(){const v=$('#np').value;if(!/^\d{4,6}$/.test(v)){toast('Usa 4 a 6 dígitos');return}
+S.set.salt=Math.random().toString(36).slice(2)+Date.now();S.set.pin=await sha(v);save();closeS();render();toast('PIN guardado')}
+function pinOff(){S.set.pin='';save();render()}
+async function unlock(){if(await sha($('#pi').value)===S.set.pin){$('#lk').classList.remove('on');$('#pi').value='';$('#pe').textContent=''}else $('#pe').textContent='PIN incorrecto'}
+
+let md='i';
+function form(){const td=ds(new Date());sheet(`<h2>Agregar producto</h2>
+<label>Nombre</label><input id="fn" placeholder="Magnesio">
+<label>Categoría</label><select id="fc">${CATS.map(c=>`<option>${c}</option>`).join('')}</select>
+<label>Dosis (libre)</label><input id="fo" placeholder="200 mg, 1 comprimido, 10 ml">
+<label>¿Cada cuánto?</label><select id="fm" onchange="md=this.value;tg()"><option value="i">Cada cierto número de horas</option><option value="m">Elegir horarios a mano</option></select>
+<div id="gi"><div class="row"><div><label>Cada (horas)</label><select id="fh">${[6,8,12,24].map(h=>`<option${h===8?' selected':''}>${h}</option>`).join('')}</select></div><div><label>Primera toma</label><input id="f1" type="time" value="08:00"></div></div></div>
+<div id="gm" style="display:none"><label>Horarios (ej: 08:00, 14:00, 20:00)</label><input id="ft" placeholder="08:00, 20:00"></div>
+<label>Días de la semana (vacío = todos)</label><div class="wds">${[1,2,3,4,5,6,0].map(i=>`<label><input type="checkbox" class="wd" value="${i}">${DN[i].slice(0,3)}</label>`).join('')}</div>
+<div class="row"><div><label>Inicio</label><input id="fs" type="date" value="${td}"></div><div><label>Duración (días)</label><input id="fd" type="number" min="0" inputmode="numeric" placeholder="Sin fin"></div></div>
+<details style="margin-top:12px"><summary class="mut" style="cursor:pointer">Más datos (opcional)</summary>
+<div class="row"><div><label>Unidades que tienes</label><input id="fk" type="number" min="0" inputmode="decimal"></div><div><label>Unidades por toma</label><input id="fu" type="number" min="0" step="any" inputmode="decimal" value="1"></div></div>
+<div class="row"><div><label>Avisar con</label><input id="fv" type="number" min="0" inputmode="numeric" value="10"></div><div><label>Vencimiento</label><input id="fe" type="date"></div></div>
+<label>Foto del producto</label><input id="fp" type="file" accept="image/*" onchange="pho(this)"></details>
+<button class="btn p" style="width:100%;margin-top:16px" onclick="saveP()">Guardar</button>`);md='i';ph=''}
+function tg(){$('#gi').style.display=md==='i'?'':'none';$('#gm').style.display=md==='m'?'':'none'}
+function saveP(){const f=i=>$('#'+i).value.trim(),name=f('fn');if(!name){toast('Escribe un nombre');return}
+const times=md==='i'?gen(f('f1'),+f('fh')):f('ft').split(/[\s,;]+/).filter(t=>/^\d{1,2}:\d{2}$/.test(t)).map(t=>pad(t.split(':')[0])+':'+t.split(':')[1]).sort();
+if(!times.length){toast('Agrega al menos un horario');return}
+const days=[...document.querySelectorAll('.wd:checked')].map(e=>+e.value),dur=+f('fd'),start=f('fs')||ds(new Date());let end=null;
+if(dur>0){const e=new Date(start+'T00:00');e.setDate(e.getDate()+dur-1);end=ds(e)}
+S.prods.push({id:'p'+Date.now(),name,cat:f('fc'),dose:f('fo')||'1 toma',times,days,start,end,status:'activo',stock:f('fk')===''?null:+f('fk'),per:+f('fu')||1,low:+f('fv')||0,exp:f('fe')||'',img:ph});save();closeS();tab='hoy';render();toast('Producto agregado')}
+
+let LR=[],ph='',cm=new Date();cm.setDate(1);
+function dleft(p){if(p.stock==null)return null;const pd=p.times.length*(p.days.length||7)/7*(p.per||1);return pd>0?Math.floor(p.stock/pd):null}
+function warn(p){const w=[];if(p.stock!=null&&p.stock<=(p.low||0))w.push('⚠️ Tu producto está por agotarse ('+p.stock+' u.)');
+if(p.exp){const n=Math.round((new Date(p.exp+'T00:00')-new Date(ds(new Date())+'T00:00'))/864e5);if(n<0)w.push('⚠️ Vencido');else if(n<=30)w.push('⚠️ Vence en '+n+' días')}return w.join(' · ')}
+function alerts(){const o=[];S.prods.forEach(p=>{if(p.status==='finalizado')return;const w=warn(p);if(w)o.push('<div><b>'+esc(p.name)+'</b>: '+w+'</div>')});return o.length?'<div class="card" style="border-color:var(--warn)">'+o.join('')+'</div>':''}
+function inv(p){let h='';const dl=dleft(p);if(p.stock!=null)h+=`<div style="margin-top:8px">📦 Quedan ${p.stock} u.${dl!=null?' (~'+dl+' días)':''} <button class="btn" style="min-height:34px;padding:4px 10px" onclick="rst('${p.id}')">Actualizar</button></div>`;
+if(p.exp)h+=`<div class="mut">Vence: ${p.exp.split('-').reverse().join('/')}</div>`;const w=warn(p);if(w)h+=`<div style="color:var(--warn);font-weight:700;margin-top:4px">${w}</div>`;return h}
+function rst(id){sheet(`<h2>Actualizar stock</h2><label>Unidades actuales</label><input id="rs" type="number" min="0" inputmode="decimal"><button class="btn p" style="width:100%;margin-top:12px" onclick="const p=S.prods.find(x=>x.id==='${id}');p.stock=+$('#rs').value;save();closeS();render()">Guardar</button>`)}
+function pho(el){const fi=el.files[0];if(!fi)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=160;const x=c.getContext('2d'),q=Math.min(im.width,im.height);x.drawImage(im,(im.width-q)/2,(im.height-q)/2,q,q,0,0,160,160);ph=c.toDataURL('image/jpeg',.7);toast('Foto lista')};im.src=r.result};r.readAsDataURL(fi)}
+function cmv(d){cm.setMonth(cm.getMonth()+d);render()}
+function cal(){const y=cm.getFullYear(),m=cm.getMonth(),n=new Date(y,m+1,0).getDate(),off=(cm.getDay()+6)%7,td=ds(new Date()),lg={};
+Object.values(S.logs).forEach(l=>{(lg[l.d]=lg[l.d]||{t:0,o:0})[l.s]++});
+let h=`<h1>Calendario</h1><div class="row" style="align-items:center;margin-bottom:10px"><button class="btn" onclick="cmv(-1)">‹</button><b style="text-align:center;flex:2">${MN[m]} ${y}</b><button class="btn" onclick="cmv(1)">›</button></div><div class="cal">`+['L','M','M','J','V','S','D'].map(x=>`<b>${x}</b>`).join('');
+for(let i=0;i<off;i++)h+='<span></span>';
+for(let d=1;d<=n;d++){const k=y+'-'+pad(m+1)+'-'+pad(d),g=lg[k]||{t:0,o:0},tot=Math.max(dosesFor(k).length,g.t+g.o);let c='';
+if(k<=td&&(g.t||g.o))c=g.o>=2?'r':(g.t===tot?'g':'y');h+=`<button class="dy ${c} ${k===td?'td':''}" onclick="day('${k}')">${d}</button>`}
+return h+'</div><p class="mut">🟢 completo · 🟡 parcial · 🔴 varias omitidas · ⚪ sin registros. Toca un día para ver sus tomas.</p>'}
+function day(k){const a=k.split('-'),it={};dosesFor(k).forEach(x=>it[x.k]={n:x.p.name,z:x.p.dose,t:x.t,s:st(x)});
+Object.entries(S.logs).forEach(e=>{if(e[1].d===k)it[e[0]]={n:e[1].n,z:e[1].z,t:e[1].t,s:e[1].s}});
+const L=Object.values(it).sort((u,v)=>u.t.localeCompare(v.t));
+sheet(`<h2>${+a[2]} de ${MN[+a[1]-1]}</h2>`+(L.length?L.map(x=>`<div class="tl"><span>${x.s==='t'?'🟢':x.s==='o'?'🔴':'⚪'}</span><b>${x.t}</b><span class="n">${esc(x.n)} <span class="mut">${esc(x.z)}</span></span></div>`).join(''):'<p class="mut">Sin tomas este día.</p>'))}
+function csv(){const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"',rows=[['Fecha','Producto','Dosis','Hora programada','Hora tomada','Estado','Motivo']].concat(LR.map(l=>[l.d,l.n,l.z,l.t,l.s==='t'?new Date(l.at).toTimeString().slice(0,5):'',l.s==='t'?'Tomado':'Omitido',l.r]));
+const b=new Blob(['\ufeff'+rows.map(r=>r.map(q).join(',')).join('\n')],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='medicontrol-historial.csv';a.click()}
+let LP=['',''],dp=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});addEventListener('appinstalled',()=>{dp=null;toast('App instalada')});
+function inst(){if(matchMedia('(display-mode: standalone)').matches){toast('Ya estás usando la app instalada');return}
+if(dp){dp.prompt();dp.userChoice.finally(()=>dp=null);return}
+sheet('<h2>Instalar app</h2><p>1. Toca el menú ⋮ de Chrome (arriba a la derecha).</p><p>2. Elige <b>Instalar app</b> o <b>Agregar a la pantalla principal</b>.</p><p>3. Confirma.</p><button class="btn p" style="width:100%" onclick="closeS()">Entendido</button>')}
+const WZ=['Organiza tus medicamentos y suplementos.','Recibe recordatorios cuando sea hora.','Registra cada toma y consulta tu historial.','Protege tus datos con un PIN.'],WI=['🗂️','🔔','✅','🔒'];
+function wiz(i){sheet(`<div style="text-align:center;padding:12px 0"><div style="font-size:56px">${WI[i]}</div><h2>${WZ[i]}</h2><p class="mut">${i+1} de 4</p></div><button class="btn p" style="width:100%" onclick="${i<3?'wiz('+(i+1)+')':'S.set.wiz=1;save();closeS()'}">${i<3?'Siguiente':'COMENZAR'}</button>${i<3?'<button class="btn" style="width:100%;margin-top:8px" onclick="S.set.wiz=1;save();closeS()">Omitir</button>':''}`)}
+function badge(){try{const d=ds(new Date()),n=dosesFor(d).filter(x=>st(x)==='p'&&new Date(d+'T'+x.t)<=new Date()).length;if(navigator.setAppBadge)(n?navigator.setAppBadge(n):navigator.clearAppBadge()).catch(()=>{})}catch(e){}}
+function pdf(){const R=LR,t=R.filter(l=>l.s==='t').length,by={},fm=d=>d.split('-').reverse().join('/');R.forEach(l=>{const b=by[l.n]=by[l.n]||{p:0,t:0,o:0};b.p++;l.s==='t'?b.t++:b.o++});
+$('#rp').innerHTML=`<h1>Informe de tratamiento</h1><p>Periodo: ${fm(LP[0])} - ${fm(LP[1])}<br>Registradas: ${R.length} · Tomadas: ${t} · Omitidas: ${R.length-t}</p><h2>Por producto</h2><table><tr><th>Producto</th><th>Registradas</th><th>Tomadas</th><th>Omitidas</th></tr>${Object.entries(by).map(e=>`<tr><td>${esc(e[0])}</td><td>${e[1].p}</td><td>${e[1].t}</td><td>${e[1].o}</td></tr>`).join('')}</table><h2>Detalle</h2><table><tr><th>Fecha</th><th>Producto</th><th>Hora</th><th>Estado</th></tr>${R.map(l=>`<tr><td>${fm(l.d)}</td><td>${esc(l.n)} ${esc(l.z)}</td><td>${l.t}</td><td>${l.s==='t'?'Tomado':'Omitido'}</td></tr>`).join('')}</table><p style="font-size:12px">Registro personal generado por MediControl. No reemplaza indicaciones médicas.</p>`;window.print()}
+const b64=u=>{let s='';u=new Uint8Array(u);u.forEach(c=>s+=String.fromCharCode(c));return btoa(s)},ub=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function key(pw,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function pack(pw){const j=JSON.stringify({prods:S.prods,logs:S.logs});if(!pw)return j;const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),c=await crypto.subtle.encrypt({name:'AES-GCM',iv},await key(pw,salt),new TextEncoder().encode(j));return JSON.stringify({enc:1,s:b64(salt),i:b64(iv),d:b64(c)})}
+async function unpack(t,pw){let o=JSON.parse(t);if(o.enc)o=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:ub(o.i)},await key(pw,ub(o.s)),ub(o.d))));return o}
+async function bkDl(){const t=await pack($('#bp').value),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'application/json'}));a.download='medicontrol-copia-'+ds(new Date())+'.json';a.click();toast('Copia descargada')}
+async function bkSh(){const t=await pack($('#bp').value),f=new File([t],'medicontrol-copia-'+ds(new Date())+'.json',{type:'text/plain'});try{if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:'Copia MediControl'});else bkDl()}catch(e){}}
+async function rf(el){const f=el.files[0];if(!f)return;try{const o=await unpack(await f.text(),$('#bp').value);if(!Array.isArray(o.prods)||typeof o.logs!=='object')throw 0;S.prods=o.prods;S.logs=o.logs;save();render();toast('Copia restaurada')}catch(e){toast('Archivo inválido o contraseña incorrecta')}el.value=''}
+function sheet(h){$('#shc').innerHTML=h;$('#sh').classList.add('on')}
+function closeS(){$('#sh').classList.remove('on')}
+function render(){const v={hoy,prods,cal,hist,ajustes}[tab];$('#m').innerHTML=v();$('#fab').style.display=(tab==='hoy'||tab==='prods')?'':'none';
+$('#nv').innerHTML=[['hoy','🏠','Hoy'],['prods','💊','Productos'],['cal','📅','Calendario'],['hist','📊','Historial'],['ajustes','⚙️','Ajustes']].map(a=>`<button class="${tab===a[0]?'on':''}" onclick="tab='${a[0]}';render()"><span>${a[1]}</span>${a[2]}</button>`).join('')}
+function alarm(x,r){try{navigator.vibrate&&navigator.vibrate([300,150,300])}catch(e){}try{if(window.Notification&&Notification.permission==='granted')new Notification((r?'🔔 Recordatorio: ':'💊 Hora de tomar ')+x.p.name,{body:x.p.dose+' · '+x.t,tag:x.k})}catch(e){}}
+function tick(){const d=ds(new Date());dosesFor(d).forEach(x=>{if(S.logs[x.k])return;const due=sn[x.k]||new Date(d+'T'+x.t).getTime(),id=x.k+due;
+if(Date.now()>=due&&!nt[id]&&Date.now()-due<6*36e5){nt[id]=1;alarm(x)}if(S.set.rep!==false)[1,2].forEach(n=>{const t=due+n*9e5,i2=id+'r'+n;if(Date.now()>=t&&!nt[i2]&&Date.now()-t<36e5){nt[i2]=1;alarm(x,1)}})});badge();if(tab==='hoy'&&!$('#sh.on'))render()}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+theme();render();if(S.set.pin)$('#lk').classList.add('on');setInterval(tick,20000);tick();if(!S.set.wiz&&!S.prods.length&&!S.set.pin)wiz(0);else if(/a=add/.test(location.search))form();
+</script></body></html>
